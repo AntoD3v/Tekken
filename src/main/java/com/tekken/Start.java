@@ -16,6 +16,7 @@ public class Start extends AbstractVerticle {
         final Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
+        router.get().handler(new handleGetIndex());
         //router.post("/auth/login").handler(new handlePostLogin(replication, cache));
         //router.post("/auth/token").handler(new handlePostToken(cache));
 
