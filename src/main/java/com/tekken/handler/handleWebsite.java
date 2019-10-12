@@ -14,8 +14,11 @@ public class handleWebsite implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        //routingContext.response().setChunked(true);
-
-        routingContext.response().end(templateManager.getTemplateFilesCache().get("index.html"));
+        System.out.println("Path -> "+routingContext.request().path());
+        if(templateManager.getTemplateCache().getRouters().containsKey(routingContext.request().path()))
+            routingContext.response().end(
+                templateManager.getTemplateCache().getTemplateFilesCache().get(templateManager.getTemplateCache().getRouters().get(routingContext.request().path())).getHtmlCode());
+        else
+            routingContext.fail(404);
     }
 }
