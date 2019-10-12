@@ -1,4 +1,4 @@
-package com.tekken.extra;
+package com.tekken.exception;
 
 import java.util.HashMap;
 import java.util.Map;

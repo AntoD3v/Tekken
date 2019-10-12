@@ -1,7 +1,8 @@
 package com.tekken;
 
-import com.tekken.extra.ErrorManager;
+import com.tekken.exception.ErrorManager;
 import com.tekken.handler.handleWebsite;
+import com.tekken.site.Controller;
 import com.tekken.template.TemplateEngine;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServer;
@@ -15,6 +16,7 @@ import java.net.URLDecoder;
 
 public class Start extends AbstractVerticle {
 
+    private final Controller controller;
     private TemplateEngine templateEngine;
     private ErrorManager errorManager;
 
@@ -22,9 +24,9 @@ public class Start extends AbstractVerticle {
 
 
     public Start() {
-
+        controller = new Controller();
         try {
-            templateEngine = new TemplateEngine("webroot");
+            templateEngine = new TemplateEngine(controller,  "webroot");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -35,7 +37,7 @@ public class Start extends AbstractVerticle {
         final Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
-        Route website = router.get().handler(new handleWebsite(templateEngine));
+        Route website = router.get().handler(new handleWebsite(controller, templateEngine));
         router.get("/assets/").handler(StaticHandler.create("assets/"));
 
         router.get().failureHandler(ctx -> {

@@ -16,6 +16,7 @@ public class TemplateFile {
     private boolean cache = true;
     private ArrayList<String> getters = new ArrayList<>();
     private long lastModified;
+    private String clazz = "com.tekken.site.Website";
 
     public TemplateFile(File file, String name, String htmlCode) {
         this.lastModified = file.lastModified();
@@ -44,6 +45,9 @@ public class TemplateFile {
                         break;
                     case "access_html":
 
+                        break;
+                    case "backend":
+                        clazz = e.text();
                         break;
                     default:
                         System.out.println("Properties <"+e.tagName()+"> not exist in "+getName());
@@ -89,5 +93,9 @@ public class TemplateFile {
 
     public void setHtmlCode(String htmlCode) {
         this.htmlCode = htmlCode;
+    }
+
+    public String getClazz() {
+        return clazz;
     }
 }
