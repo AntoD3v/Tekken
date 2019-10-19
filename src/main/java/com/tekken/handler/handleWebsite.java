@@ -3,6 +3,7 @@ package com.tekken.handler;
 import com.tekken.exception.BackendInvalidException;
 import com.tekken.site.Controller;
 import com.tekken.site.Response;
+import com.tekken.support.Logs;
 import com.tekken.template.TemplateEngine;
 import com.tekken.template.TemplateFile;
 import io.vertx.core.Handler;
@@ -18,16 +19,22 @@ public class handleWebsite implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        System.out.println("Path -> "+routingContext.request().path());
+
+        Logs.debug("Client "+routingContext.request().remoteAddress().host()+" with path -> "+routingContext.request().path());
+
         if(templateManager.getTemplateCache().getRouters().containsKey(routingContext.request().path())) {
+
             TemplateFile templateFile = templateManager.getTemplateCache().getTemplateFilesCache().get(templateManager.getTemplateCache().getRouters().get(routingContext.request().path()));
+
             try {
+
                 Response response = templateManager.classLoader(templateFile);
                 routingContext.response().setStatusCode(200);
                 routingContext.response().end(response.getHtmlCode());
+
             } catch (BackendInvalidException e) {
                 routingContext.fail(500);
-                e.printStackTrace();
+                Logs.error("Client "+routingContext.request().remoteAddress().host()+" created error 500 ", e);
             }
        } else
             routingContext.fail(404);

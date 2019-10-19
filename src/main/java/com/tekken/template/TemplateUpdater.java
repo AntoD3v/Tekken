@@ -1,5 +1,7 @@
 package com.tekken.template;
 
+import com.tekken.support.Logs;
+
 import java.io.*;
 import java.net.URLDecoder;
 
@@ -39,7 +41,7 @@ public class TemplateUpdater extends Thread {
     public void updater() {
         int i = getFolderFile(templateEngine.getRoot());
         if(i != 0)
-            System.out.println("Update finish ! "+i+" file(s) up to date ");
+            Logs.info("Update finish ! "+i+" file(s) up to date ");
 
     }
 

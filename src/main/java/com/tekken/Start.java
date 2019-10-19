@@ -3,6 +3,7 @@ package com.tekken;
 import com.tekken.exception.ErrorManager;
 import com.tekken.handler.handleWebsite;
 import com.tekken.site.Controller;
+import com.tekken.support.Logs;
 import com.tekken.template.TemplateEngine;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServer;
@@ -10,6 +11,7 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -18,7 +20,6 @@ public class Start extends AbstractVerticle {
 
     private final Controller controller;
     private TemplateEngine templateEngine;
-    private ErrorManager errorManager;
 
     private final ClassLoader classLoader = getClass().getClassLoader();
 
@@ -28,7 +29,7 @@ public class Start extends AbstractVerticle {
         try {
             templateEngine = new TemplateEngine(controller,  "webroot");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Logs.error("Template not found", e);
         }
     }
 
@@ -37,8 +38,8 @@ public class Start extends AbstractVerticle {
         final Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
+        router.route("/assets/*").handler(StaticHandler.create().setCachingEnabled(true).setWebRoot("assets"));
         Route website = router.get().handler(new handleWebsite(controller, templateEngine));
-        router.get("/assets/").handler(StaticHandler.create("assets/"));
 
         router.get().failureHandler(ctx -> {
             try {
@@ -50,7 +51,8 @@ public class Start extends AbstractVerticle {
             }
         });
 
-        HttpServer test = vertx.createHttpServer().requestHandler(router).listen(80);
+        HttpServer test = vertx.createHttpServer().requestHandler(router).listen(Option.VERTX_PORT);
+        Logs.info("Listening on *:"+Option.VERTX_PORT);
 
     }
 

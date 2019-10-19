@@ -1,6 +1,7 @@
 package com.tekken.template;
 
 import com.tekken.Option;
+import com.tekken.support.Logs;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -50,7 +51,7 @@ public class TemplateFile {
                         clazz = e.text();
                         break;
                     default:
-                        System.out.println("Properties <"+e.tagName()+"> not exist in "+getName());
+                        Logs.warn("Properties <" + e.tagName() + "> not exist in " + getName());
                 }
             }
             document.select("tekken").get(0).remove();

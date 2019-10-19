@@ -7,7 +7,9 @@ import com.tekken.site.Request;
 import com.tekken.site.Response;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class TemplateEngine {
 
@@ -27,12 +29,11 @@ public class TemplateEngine {
     public Response classLoader(TemplateFile templateFile) throws BackendInvalidException {
         try {
 
-            Class[] cArg = new Class[3];
-            cArg[0] = Controller.class;
-            cArg[1] = Request.class;
-            cArg[2] = Response.class;
-            return (Response) Class.forName(templateFile.getClazz()).getDeclaredMethod("handler", cArg).invoke(
-                    controller, new Request(), new Response(templateFile.getHtmlCode()), null);
+            Class<?> c = Class.forName(templateFile.getClazz());
+            Constructor<?> cons = c.getConstructor();
+            Object o = cons.newInstance();
+            Method method = c.getMethod("handler", Controller.class, Request.class, Response.class);
+            return (Response) method.invoke(o, controller, new Request(), new Response(templateFile.getHtmlCode()));
         } catch (Exception e) {
             e.printStackTrace();
             throw new BackendInvalidException(templateFile.getClazz());

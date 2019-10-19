@@ -21,7 +21,14 @@ public class Tekken {
     }
 
     public static void main(String[] args){
-        System.out.println(" * Tekken 2019 (By AntoDev)");
+        System.out.println( "       _____    _    _              \n" +
+                            "      |_   _|  | |  | |             \n" +
+                            "        | | ___| | _| | _____ _ __  \n" +
+                            "        | |/ _ \\ |/ / |/ / _ \\ '_ \\ \n" +
+                            "        | |  __/   <|   <  __/ | | |\n" +
+                            "        \\_/\\___|_|\\_\\_|\\_\\___|_| |_| V-0.1\n" +
+                            "                              By antozzz.fr \n" +
+                            "");
         new Tekken();
     }
 

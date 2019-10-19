@@ -1,17 +1,20 @@
 <html>
     <tekken>
         <backend>com.tekken.example.Home</backend>
-        <cache>true</cache>
         <getter>/home</getter>
         <getter>/</getter>
-        <access_html>false</access_html>
+        <compile>
+            <css>true</css>
+        </compile>
     </tekken>
     <head>
         <title>Accueil - Tekken</title>
-
+        <link rel="icon" href="data:,">
+        <link rel="stylesheet" href="/assets/style.css">
     </head>
 
     <body>
-        Yo {username}, aujourd'hui, j'ai faim
+        <h1>Darthvader</h1>
+        <p>Bienvenue a toi {username}</p>
     </body>
 </html>
