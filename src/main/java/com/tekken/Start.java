@@ -1,6 +1,5 @@
 package com.tekken;
 
-import com.tekken.exception.ErrorManager;
 import com.tekken.handler.handleWebsite;
 import com.tekken.site.Controller;
 import com.tekken.support.Logs;
@@ -38,20 +37,22 @@ public class Start extends AbstractVerticle {
         final Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
+
         router.route("/assets/*").handler(StaticHandler.create().setCachingEnabled(true).setWebRoot("assets"));
-        Route website = router.get().handler(new handleWebsite(controller, templateEngine));
+
+        router.get().handler(new handleWebsite(templateEngine));
 
         router.get().failureHandler(ctx -> {
-            try {
+           try {
                 String path = URLDecoder.decode(classLoader.getResource("tekken_default").getPath(), "UTF-8");
                 File file = new File(path+"/"+ctx.statusCode()+".html");
                 ctx.response().end(file.exists() ? readToString(file) : "Error tekken");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-        });
+       });
 
-        HttpServer test = vertx.createHttpServer().requestHandler(router).listen(Option.VERTX_PORT);
+        vertx.createHttpServer().requestHandler(router).listen(Option.VERTX_PORT);
         Logs.info("Listening on *:"+Option.VERTX_PORT);
 
     }

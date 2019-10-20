@@ -7,6 +7,6 @@
                               By antozzz.fr
 
 CHANGELOG V-0.1:
-    - Système de template (update auto, cache et configuration d'une page
+    - Système de template (update auto, cache et configuration d'une page)
     - Backend système (Execution d'une classe prédéfini dans le front end)
     - Classe logs pour repérer les erreurs

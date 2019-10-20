@@ -1,5 +1,6 @@
 package com.tekken;
 
+import com.tekken.support.Updater;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -9,6 +10,8 @@ import java.util.function.Consumer;
 public class Tekken {
 
     public Tekken() {
+
+        Updater.upgrade();
 
         Consumer<Vertx> runner = vertx -> {
             for (int i=0;i < Option.VERTX_POOL; i++)

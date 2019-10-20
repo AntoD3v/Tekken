@@ -5,6 +5,7 @@ import com.tekken.site.Controller;
 import com.tekken.site.Request;
 import com.tekken.site.Response;
 import com.tekken.site.Website;
+import com.tekken.support.Logs;
 
 public class Home implements Website {
 

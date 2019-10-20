@@ -14,4 +14,6 @@ public class Option {
     public static String FIREWALL_HOST = "127.0.0.1";
     public static int FIREWALL_PORT = 100;
 
+    public static int MYSQL_POOL = 2;
+
 }

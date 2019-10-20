@@ -44,7 +44,7 @@ public class TemplateFile {
                     case "getter":
                         getters.add(e.text());
                         break;
-                    case "access_html":
+                    case "compile":
 
                         break;
                     case "backend":

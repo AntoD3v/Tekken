@@ -26,14 +26,14 @@ public class TemplateEngine {
         templateUpdater.start();
     }
 
-    public Response classLoader(TemplateFile templateFile) throws BackendInvalidException {
+    public Response classLoader(TemplateFile templateFile, Request request) throws BackendInvalidException {
         try {
 
             Class<?> c = Class.forName(templateFile.getClazz());
             Constructor<?> cons = c.getConstructor();
             Object o = cons.newInstance();
             Method method = c.getMethod("handler", Controller.class, Request.class, Response.class);
-            return (Response) method.invoke(o, controller, new Request(), new Response(templateFile.getHtmlCode()));
+            return (Response) method.invoke(o, controller, request, new Response(templateFile.getHtmlCode()));
         } catch (Exception e) {
             e.printStackTrace();
             throw new BackendInvalidException(templateFile.getClazz());
