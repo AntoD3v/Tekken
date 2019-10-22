@@ -39,20 +39,19 @@ public class TemplateUpdater extends Thread {
         }
     }
     public void updater() {
-        int i = getFolderFile(templateEngine.getRoot());
+        int i = getFolderFile(getRessourceFile(templateEngine.getRoot()));
         if(i != 0)
             Logs.info("Update finish ! "+i+" file(s) up to date ");
 
     }
 
-    private int getFolderFile(String directory) {
+    private int getFolderFile(File directoryFile) {
         int updateInt = 0;
         TemplateCache cache = templateEngine.getTemplateCache();
-        File directoryFile = getRessourceFile(directory);
         if (directoryFile != null && directoryFile.exists()) {
             for (File file : directoryFile.listFiles()) {
                 if (file.isDirectory()) {
-                    getFolderFile(file.getPath());
+                    updateInt += getFolderFile(file);
                     continue;
                 }
                 if(cache.getTemplateFilesCache().containsKey(file.getName())){

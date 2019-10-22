@@ -12,6 +12,7 @@ public class Tekken {
     public Tekken() {
 
         Updater.upgrade();
+        Option.loadConfig();
 
         Consumer<Vertx> runner = vertx -> {
             for (int i=0;i < Option.VERTX_POOL; i++)
