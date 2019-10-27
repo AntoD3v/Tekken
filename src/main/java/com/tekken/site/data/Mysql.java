@@ -1,6 +1,5 @@
 package com.tekken.site.data;
 
-import com.tekken.site.data.Callback;
 import com.tekken.support.Logs;
 
 import java.sql.*;

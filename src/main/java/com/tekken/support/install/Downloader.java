@@ -2,10 +2,8 @@ package com.tekken.support.install;
 
 import com.tekken.Option;
 import com.tekken.support.Logs;
-import sun.rmi.runtime.Log;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +14,7 @@ public class Downloader {
     private FileUtil fileUtil = new FileUtil();
 
     public Downloader() {
-        Logs.info("Tekken is going be install. Please wait 2 minuts ...");
+        Logs.info("Tekken is going be installed. Please wait 2 minuts ...");
         createFolder();
         Option.createConfig();
     }

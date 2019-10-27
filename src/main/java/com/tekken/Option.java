@@ -13,7 +13,8 @@ public class Option {
     public static boolean TEKKEN_DEBUG = true;
     public static boolean MODE_DEVELOPPER = true;
 
-    public static Integer UPDATER_DELAY = 10*1000;
+    public static Integer TEMPLATE_UPDATER_DELAY = 10*1000;
+    public static String TEMPLATE_WEBROOT = "webroot";
 
     public static boolean FIREWALL_ENABLE = true;
     public static String FIREWALL_HOST = "127.0.0.1";

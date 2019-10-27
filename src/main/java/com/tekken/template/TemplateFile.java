@@ -2,45 +2,57 @@ package com.tekken.template;
 
 import com.tekken.Option;
 import com.tekken.support.Logs;
+import com.tekken.template.impl.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public class TemplateFile {
+public class TemplateFile implements FileUtils {
 
     private final String name;
     private String htmlCode;
-    private boolean cache = true;
     private ArrayList<String> getters = new ArrayList<>();
+    private ArrayList<String> backends = new ArrayList<>();
     private long lastModified;
-    private String clazz = "com.tekken.site.Website";
 
     public TemplateFile(File file, String name, String htmlCode) {
         this.lastModified = file.lastModified();
         this.name = name;
-        this.htmlCode = htmlCode;
-        parseHtmlToTerrex();
-        if(!Option.MODE_DEVELOPPER)
-            compile();
+        htmlCode = parseConfigurationTekken(Jsoup.parse(htmlCode));
+        this.htmlCode = parseImportTekken(Jsoup.parse(htmlCode));
     }
 
-    private void compile() {
-        //css & javascript minifié, simplifié,
+    private String parseImportTekken(Document document) {
+        Iterator<Element> it = document.select("tekken-import").iterator();
+        Element imp; String template, backend, html; File file;
+        while(it.hasNext()){
+            imp = it.next();
+            if((template = imp.attr("template")) != null && (backend = imp.attr("backend")) != null){
+                if(!(file = new File(getPathRessource(Option.TEMPLATE_WEBROOT)+"/"+template)).exists()){
+                    Logs.warn("Cannot import template in "+getName());
+                    continue;
+                }
+                html = document.toString().replace(imp.toString(), readToString(file));
+                document = Jsoup.parse(html);
+                backends.add(backend);
+                continue;
+            }
+            Logs.warn("Attributes missing to import in "+getName());
+        }
+        return document.toString();
     }
 
-    private void parseHtmlToTerrex(){
-        Document document = Jsoup.parse(htmlCode);
+    private String parseConfigurationTekken(Document document){
         Elements terrex = document.select("tekken");
-        if(!document.select("tekken").isEmpty()){
+        if(!terrex.isEmpty()){
             for (Element e : terrex.get(0).children()){
                 switch (e.tagName()){
-                    case "cache":
-                        setCache(Boolean.parseBoolean(e.text()));
-                        break;
                     case "getter":
                         getters.add(e.text());
                         break;
@@ -48,7 +60,7 @@ public class TemplateFile {
 
                         break;
                     case "backend":
-                        clazz = e.text();
+                        backends.add(e.text());
                         break;
                     default:
                         Logs.warn("Properties <" + e.tagName() + "> not exist in " + getName());
@@ -57,7 +69,7 @@ public class TemplateFile {
             document.select("tekken").get(0).remove();
 
         }
-        htmlCode = document.html();
+        return document.html();
     }
 
     public String getName() {
@@ -68,20 +80,12 @@ public class TemplateFile {
         return htmlCode;
     }
 
-    public boolean isCache() {
-        return cache;
-    }
-
-    public void setCache(boolean cache) {
-        this.cache = cache;
-    }
-
     public ArrayList<String> getGetters() {
         return getters;
     }
 
-    public void setRoot(ArrayList<String> getters) {
-        this.getters = getters;
+    public ArrayList<String> getBackends() {
+        return backends;
     }
 
     public long getLastModified() {
@@ -94,9 +98,5 @@ public class TemplateFile {
 
     public void setHtmlCode(String htmlCode) {
         this.htmlCode = htmlCode;
-    }
-
-    public String getClazz() {
-        return clazz;
     }
 }

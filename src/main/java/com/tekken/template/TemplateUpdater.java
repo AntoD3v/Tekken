@@ -1,22 +1,24 @@
 package com.tekken.template;
 
+import com.tekken.Option;
 import com.tekken.support.Logs;
+import com.tekken.template.impl.FileUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-public class TemplateUpdater extends Thread {
+public class TemplateUpdater implements Runnable, FileUtils {
 
-    private final int delay;
     private final String path;
     private final TemplateEngine templateEngine;
 
     private final ClassLoader classLoader = getClass().getClassLoader();
 
-    public TemplateUpdater(int delay, String root, TemplateEngine templateEngine) throws UnsupportedEncodingException {
-        this.delay = delay;
+    public TemplateUpdater(String root, TemplateEngine templateEngine) throws UnsupportedEncodingException {
         this.templateEngine = templateEngine;
         path = URLDecoder.decode(classLoader.getResource(root).getPath(), "UTF-8");
+        new Thread(this).start();
     }
 
     @Override
@@ -24,22 +26,16 @@ public class TemplateUpdater extends Thread {
 
         while (Thread.interrupted() != true) {
 
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            if(path == null)
+                throw new IllegalArgumentException("Template absent !");
 
-            if (path != null) {
-                updater();
-                continue;
-            }
-            throw new IllegalArgumentException("Template absent !");
+            updater();
+            try { Thread.sleep(Option.TEMPLATE_UPDATER_DELAY); } catch (InterruptedException e) { }
 
         }
     }
     public void updater() {
-        int i = getFolderFile(getRessourceFile(templateEngine.getRoot()));
+        int i = getFolderFile(getRessourceFile(Option.TEMPLATE_WEBROOT));
         if(i != 0)
             Logs.info("Update finish ! "+i+" file(s) up to date ");
 
@@ -54,40 +50,20 @@ public class TemplateUpdater extends Thread {
                     updateInt += getFolderFile(file);
                     continue;
                 }
+                if(!hasExtension(file.getName(), "html"))
+                    continue;
                 if(cache.getTemplateFilesCache().containsKey(file.getName())){
                     TemplateFile templateFile = cache.getTemplateFilesCache().get(file.getName());
-                    if(templateFile.getLastModified() == file.lastModified()){
+                    if(templateFile.getLastModified() == file.lastModified())
                         continue;
-                    }else {
-                        templateFile.setHtmlCode(readToString(file));
-                        templateFile.setLastModified(file.lastModified());
-                        templateEngine.getTemplateCache().updateFileCache(file.getName(), templateFile);
-                    }
-                }else
-                    templateEngine.getTemplateCache().updateFileCache(file.getName(), new TemplateFile(file, file.getName(), readToString(file)));
+                    cache.getTemplateFilesCache().remove(file.getName());
+                }
+                templateEngine.getTemplateCache().updateFileCache(file.getName(), new TemplateFile(file, file.getName(), readToString(file)));
                 updateInt++;
             }
             return updateInt;
         }
         return 0;
-    }
-
-    private String readToString(File file) {
-        String returnString = "";
-        try {
-            FileReader reader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(reader);
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                returnString += line;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return returnString;
     }
 
     private File getRessourceFile(String file){

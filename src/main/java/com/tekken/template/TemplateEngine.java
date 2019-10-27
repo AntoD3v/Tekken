@@ -1,43 +1,43 @@
 package com.tekken.template;
 
-import com.tekken.exception.BackendInvalidException;
 import com.tekken.Option;
+import com.tekken.exception.BackendInvalidException;
 import com.tekken.site.Controller;
 import com.tekken.site.Request;
 import com.tekken.site.Response;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class TemplateEngine {
 
     private final TemplateUpdater templateUpdater;
-    private final TemplateCache templateCache = new TemplateCache();
-    private final String root;
+    private final TemplateRouter templateRouter = new TemplateRouter();
+    private final TemplateCache templateCache = new TemplateCache(templateRouter);
     private final Controller controller;
 
-    public TemplateEngine(Controller controller, String root) throws UnsupportedEncodingException {
+    public TemplateEngine(Controller controller) throws UnsupportedEncodingException {
         this.controller = controller;
-        this.root = root;
-        this.templateUpdater = new TemplateUpdater(Option.UPDATER_DELAY, root, this);
-        templateUpdater.updater();
-        templateUpdater.start();
+        this.templateUpdater = new TemplateUpdater(Option.TEMPLATE_WEBROOT, this);
     }
 
     public Response classLoader(TemplateFile templateFile, Request request) throws BackendInvalidException {
-        try {
+        Response response = new Response(templateFile.getHtmlCode());
 
-            Class<?> c = Class.forName(templateFile.getClazz());
-            Constructor<?> cons = c.getConstructor();
-            Object o = cons.newInstance();
-            Method method = c.getMethod("handler", Controller.class, Request.class, Response.class);
-            return (Response) method.invoke(o, controller, request, new Response(templateFile.getHtmlCode()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new BackendInvalidException(templateFile.getClazz());
+        for (String clazz : templateFile.getBackends()) {
+            try {
+                Class<?> c = Class.forName(clazz);
+                Constructor<?> cons = c.getConstructor();
+                Object o = cons.newInstance();
+                Method method = c.getMethod("handler", Controller.class, Request.class, Response.class);
+                response = (Response) method.invoke(o, controller, request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new BackendInvalidException(clazz);
+            }
         }
+        return response;
     }
 
     public TemplateCache getTemplateCache() {
@@ -48,7 +48,11 @@ public class TemplateEngine {
         return templateUpdater;
     }
 
-    public String getRoot() {
-        return root;
+    public Controller getController() {
+        return controller;
+    }
+
+    public TemplateRouter getTemplateRouter() {
+        return templateRouter;
     }
 }
