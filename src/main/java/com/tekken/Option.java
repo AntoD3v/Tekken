@@ -11,6 +11,7 @@ public class Option {
     public static Integer VERTX_PORT = 80;
 
     public static boolean TEKKEN_DEBUG = true;
+    public static String TEKKEN_MODULE = "modules/";
     public static boolean MODE_DEVELOPPER = true;
 
     public static Integer TEMPLATE_UPDATER_DELAY = 10*1000;

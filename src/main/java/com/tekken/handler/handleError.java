@@ -5,8 +5,6 @@ import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 public class handleError implements Handler<RoutingContext>, FileUtils {
 

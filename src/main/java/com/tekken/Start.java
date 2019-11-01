@@ -2,6 +2,7 @@ package com.tekken;
 
 import com.tekken.handler.handleError;
 import com.tekken.handler.handleWebsite;
+import com.tekken.modules.ModuleManager;
 import com.tekken.site.Controller;
 import com.tekken.support.Logs;
 import com.tekken.template.TemplateEngine;
@@ -14,30 +15,40 @@ import java.io.UnsupportedEncodingException;
 
 public class Start extends AbstractVerticle {
 
-    private final Controller controller = new Controller();
+    private final ModuleManager moduleManager;
+    private final Controller controller;
     private TemplateEngine templateEngine;
+    private Router routers;
 
     public Start() {
+        moduleManager = new ModuleManager(this);
+        controller = new Controller(moduleManager);
         try {
             templateEngine = new TemplateEngine(controller);
         } catch (UnsupportedEncodingException e) {
-            Logs.error("Template not found", e);
+            Logs.error("Cannot found the template directory", e);
         }
+
     }
 
     public void start() {
 
-        final Router router = Router.router(vertx);
+        routers = Router.router(vertx);
 
-        router.route().handler(BodyHandler.create());
+        moduleManager.executeReady();
 
-        router.route("/assets/*").handler(StaticHandler.create().setCachingEnabled(true).setWebRoot("assets"));
-        router.get().handler(new handleWebsite(templateEngine));
-        router.get().failureHandler(new handleError());
+        routers.route().handler(BodyHandler.create());
 
-        vertx.createHttpServer().requestHandler(router).listen(Option.VERTX_PORT);
+        routers.route("/assets/*").handler(StaticHandler.create().setCachingEnabled(true).setWebRoot("assets"));
+        routers.get().handler(new handleWebsite(templateEngine));
+        routers.get().failureHandler(new handleError());
+
+        vertx.createHttpServer().requestHandler(routers).listen(Option.VERTX_PORT);
         Logs.info("Listening on *:"+Option.VERTX_PORT);
 
     }
 
+    public Router getRouters() {
+        return routers;
+    }
 }

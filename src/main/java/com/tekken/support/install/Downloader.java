@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Downloader {
 
-    private List<String> folders = Arrays.asList("templates", "modules", "config");
+    private List<String> folders = Arrays.asList("templates", "backends", "modules", "config");
     private final ClassLoader classLoader = getClass().getClassLoader();
     private FileUtil fileUtil = new FileUtil();
 

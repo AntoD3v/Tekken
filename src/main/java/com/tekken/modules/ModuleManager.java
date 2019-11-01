@@ -1,40 +1,40 @@
 package com.tekken.modules;
 
+import com.tekken.Start;
 import com.tekken.support.Logs;
-import org.apache.commons.io.FilenameUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModuleManager {
 
+    private final Start start;
+    private ModuleScanner moduleScanner = new ModuleScanner();
+    private Map<String, JavaModule> modules = new HashMap<>();
 
-
-    public ModuleManager() {
-
+    public ModuleManager(Start start) {
+        this.start = start;
+        loadAllModule();
     }
 
     public void loadAllModule(){
-        File modules = new File("modules/");
-        if(modules != null && modules.exists() && modules.isDirectory()) {
-            for(File file : modules.listFiles()){
-                if(getExtensionByApacheCommonLib(file.getPath()).equalsIgnoreCase("jar")){
-                    List clazzs = getClassFromFile(file.getPath());
-                }
-            }
-        }else
-            Logs.warn("Cannot load module");
+        Logs.info("Loading modules ...");
+        moduleScanner.moduleScannerDir();
+        moduleScanner.getMaps().entrySet().forEach(entry -> {
+            loadModule(entry.getKey(), entry.getValue());
+        });
     }
 
-    public void loadModule(String clazz) {
+    public void loadModule(String clazz, URL url) {
         try {
-            Class<?> c = Class.forName(clazz);
-            JavaModule javaModule = (JavaModule)c.newInstance();
+            Class<?> moduleClass = Class.forName(clazz, true, new URLClassLoader(new URL[]{url}));
+            JavaModule javaModule = (JavaModule) moduleClass.newInstance();
+            Logs.info("Module ["+javaModule.getModuleName()+"] is loaded !");
+            javaModule.setMain(start);
             javaModule.onLoad();
+            modules.put(javaModule.getModuleName(), javaModule);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -58,29 +58,11 @@ public class ModuleManager {
         }
     }
 
-    public List getClassFromFile(String jarName){
-        ArrayList classes = new ArrayList();
-
-        try{
-            JarInputStream jarFile = new JarInputStream
-                    (new FileInputStream(jarName));
-            JarEntry jarEntry;
-
-            while((jarEntry=jarFile.getNextJarEntry()) != null) {
-
-                if(jarEntry.getName ().endsWith (".class"))
-                    classes.add (jarEntry.getName().replaceAll("/", "\\."));
-
-            }
-        }
-        catch( Exception e){
-            e.printStackTrace ();
-        }
-        return classes;
+    public void executeReady(){
+        modules.values().forEach(javaModule -> {
+            javaModule.onReady();
+        });
     }
 
-    public String getExtensionByApacheCommonLib(String filename) {
-        return FilenameUtils.getExtension(filename);
-    }
 
 }

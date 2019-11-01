@@ -1,7 +1,10 @@
 package com.tekken.template;
 
 import com.tekken.Option;
+import com.tekken.site.Response;
+import com.tekken.site.Website;
 import com.tekken.support.Logs;
+import com.tekken.template.build.ClassLoaderExternal;
 import com.tekken.template.impl.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,23 +12,34 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.net.URLDecoder;
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class TemplateFile implements FileUtils {
 
     private final String name;
+    private final ClassLoaderExternal classLoaderExternal = new ClassLoaderExternal();
+    private URLClassLoader urlClassLoader;
     private String htmlCode;
+    private Response response;
     private ArrayList<String> getters = new ArrayList<>();
-    private ArrayList<String> backends = new ArrayList<>();
+    private ArrayList<Website> backends = new ArrayList<>();
     private long lastModified;
 
     public TemplateFile(File file, String name, String htmlCode) {
+        try {
+            this.urlClassLoader = classLoaderExternal.fileArrayToUrlClassLoader(new File("backends/").listFiles());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         this.lastModified = file.lastModified();
         this.name = name;
-        htmlCode = parseConfigurationTekken(Jsoup.parse(htmlCode));
+        htmlCode = parseConfigurationTekken(htmlCode);
         this.htmlCode = parseImportTekken(Jsoup.parse(htmlCode));
+        this.response = new Response(this.htmlCode);
+
     }
 
     private String parseImportTekken(Document document) {
@@ -40,7 +54,16 @@ public class TemplateFile implements FileUtils {
                 }
                 html = document.toString().replace(imp.toString(), readToString(file));
                 document = Jsoup.parse(html);
-                backends.add(backend);
+
+                try {
+                    Website website = (Website) classLoaderExternal.loadClass(backend, urlClassLoader).newInstance();
+                    backends.add(website);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
                 continue;
             }
             Logs.warn("Attributes missing to import in "+getName());
@@ -48,7 +71,8 @@ public class TemplateFile implements FileUtils {
         return document.toString();
     }
 
-    private String parseConfigurationTekken(Document document){
+    private String parseConfigurationTekken(String htmlCode){
+        Document document = Jsoup.parse(htmlCode);
         Elements terrex = document.select("tekken");
         if(!terrex.isEmpty()){
             for (Element e : terrex.get(0).children()){
@@ -60,16 +84,30 @@ public class TemplateFile implements FileUtils {
 
                         break;
                     case "backend":
-                        backends.add(e.text());
+
+                        try {
+                            Class clazz = classLoaderExternal.loadClass(e.text(), urlClassLoader);
+                            Website website = (Website) clazz.newInstance();
+                            backends.add(website);
+                        } catch (InstantiationException e1) {
+                            e1.printStackTrace();
+                        } catch (IllegalAccessException e1) {
+                            e1.printStackTrace();
+                        }
+
                         break;
                     default:
                         Logs.warn("Properties <" + e.tagName() + "> not exist in " + getName());
                 }
             }
-            document.select("tekken").get(0).remove();
+            return htmlCode.replaceAll("(?s)<tekken>.*</tekken>", "");
 
         }
         return document.html();
+    }
+
+    public Response getResponse() {
+        return response;
     }
 
     public String getName() {
@@ -84,7 +122,7 @@ public class TemplateFile implements FileUtils {
         return getters;
     }
 
-    public ArrayList<String> getBackends() {
+    public ArrayList<Website> getBackends() {
         return backends;
     }
 

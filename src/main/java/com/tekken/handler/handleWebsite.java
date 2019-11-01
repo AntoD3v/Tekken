@@ -3,6 +3,7 @@ package com.tekken.handler;
 import com.tekken.exception.BackendInvalidException;
 import com.tekken.site.Request;
 import com.tekken.site.Response;
+import com.tekken.support.Benchmark;
 import com.tekken.support.Logs;
 import com.tekken.template.TemplateEngine;
 import com.tekken.template.TemplateFile;
@@ -22,6 +23,9 @@ public class handleWebsite implements Handler<RoutingContext> {
 
         Logs.debug("Client "+routingContext.request().remoteAddress().host()+" with path -> "+routingContext.request().path());
 
+        String bench = routingContext.request().remoteAddress().host() + routingContext.request().path();
+        Benchmark.begin(bench);
+
         String pagename;
         if((pagename = templateEngine.getTemplateRouter().getPage(routingContext.request().path())) != null) {
 
@@ -37,6 +41,9 @@ public class handleWebsite implements Handler<RoutingContext> {
                 Response response = templateEngine.classLoader(templateFile, request);
                 routingContext.response().setStatusCode(200);
                 routingContext.response().end(response.getHtmlCode());
+
+                Benchmark.stop(bench);
+                Benchmark.result(bench);
             } catch (Exception e) {
                 routingContext.fail(500);
                 Logs.error("Client "+routingContext.request().remoteAddress().host()+" created error 500 ", e);

@@ -5,10 +5,14 @@ import com.tekken.exception.BackendInvalidException;
 import com.tekken.site.Controller;
 import com.tekken.site.Request;
 import com.tekken.site.Response;
+import com.tekken.site.Website;
+import com.tekken.support.Logs;
+import org.apache.commons.io.FilenameUtils;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 
 public class TemplateEngine {
 
@@ -19,25 +23,53 @@ public class TemplateEngine {
 
     public TemplateEngine(Controller controller) throws UnsupportedEncodingException {
         this.controller = controller;
+        getBackend();
         this.templateUpdater = new TemplateUpdater(Option.TEMPLATE_WEBROOT, this);
     }
 
-    public Response classLoader(TemplateFile templateFile, Request request) throws BackendInvalidException {
-        Response response = new Response(templateFile.getHtmlCode());
 
-        for (String clazz : templateFile.getBackends()) {
+    public Response classLoader(TemplateFile templateFile, Request request) throws BackendInvalidException {
+        Response response = templateFile.getResponse();
+
+        for (Website back : templateFile.getBackends()) {
             try {
-                Class<?> c = Class.forName(clazz);
-                Constructor<?> cons = c.getConstructor();
-                Object o = cons.newInstance();
-                Method method = c.getMethod("handler", Controller.class, Request.class, Response.class);
-                response = (Response) method.invoke(o, controller, request, response);
+                response = back.handler(controller, request, response);
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new BackendInvalidException(clazz);
+                throw new BackendInvalidException(back.getClass().getName());
             }
         }
         return response;
+
+    }
+
+    private void getBackend() {
+        File dir;
+        if((dir = new File("backends/")) != null){
+            if(dir.isDirectory()){
+                for (File file : dir.listFiles()) {
+                    if (FilenameUtils.getExtension(file.getName()).equals("java")){
+                        String classNameFile = file.getPath().replace(".java", ".class");
+                        File classFile;
+                        if((classFile = new File(classNameFile)).exists())
+                            classFile.delete();
+                        compileClass(file.getPath());
+                    }
+                }
+
+            }
+        }
+
+
+    }
+
+    public void compileClass(String javaFile) {
+        Logs.debug("Compiling java "+javaFile+" ");
+        JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
+        String javacOpts[] = {javaFile};
+        if (javac.run(null, null, null,  javacOpts) != 0) {
+            throw new RuntimeException("compilation of " + javaFile + " Failed");
+        }
     }
 
     public TemplateCache getTemplateCache() {
