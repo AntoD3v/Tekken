@@ -2,13 +2,14 @@ package com.tekken.template;
 
 import com.tekken.Option;
 import com.tekken.support.Logs;
+import com.tekken.template.build.Builder;
 import com.tekken.template.impl.FileUtils;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-public class TemplateUpdater implements Runnable, FileUtils {
+public class TemplateUpdater extends FileUtils implements Runnable {
 
     private final String path;
     private final TemplateEngine templateEngine;
@@ -35,7 +36,7 @@ public class TemplateUpdater implements Runnable, FileUtils {
         }
     }
     public void updater() {
-        int i = getFolderFile(getRessourceFile(Option.TEMPLATE_WEBROOT));
+        int i = getFolderFile(getRessourceFile(path));
         if(i != 0)
             Logs.info("Update finish ! "+i+" file(s) up to date ");
 
@@ -52,13 +53,14 @@ public class TemplateUpdater implements Runnable, FileUtils {
                 }
                 if(!hasExtension(file.getName(), "html"))
                     continue;
-                if(cache.getTemplateFilesCache().containsKey(file.getName())){
-                    TemplateFile templateFile = cache.getTemplateFilesCache().get(file.getName());
-                    if(templateFile.getLastModified() == file.lastModified())
+                if(cache.getCache().containsKey(file.getName())){
+                    TemplatePage templatePage = cache.getCache().get(file.getName());
+                    if(templatePage.getLastModified() == file.lastModified())
                         continue;
-                    cache.getTemplateFilesCache().remove(file.getName());
+                    cache.getCache().remove(file.getName());
                 }
-                templateEngine.getTemplateCache().updateFileCache(file.getName(), new TemplateFile(file, file.getName(), readToString(file)));
+
+                templateEngine.getTemplateCache().updateFileCache(file.getName(), new Builder(file.getName(), readToString(file), file.lastModified()).build());
                 updateInt++;
             }
             return updateInt;
@@ -66,7 +68,7 @@ public class TemplateUpdater implements Runnable, FileUtils {
         return 0;
     }
 
-    private File getRessourceFile(String file){
+    private File getRessourceFile(String path){
         if (path != null)
             return new File(path);
         throw new IllegalArgumentException("Template is not found !");

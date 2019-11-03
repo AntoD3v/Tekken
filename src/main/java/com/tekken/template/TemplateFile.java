@@ -1,6 +1,7 @@
 package com.tekken.template;
 
 import com.tekken.Option;
+import com.tekken.exception.BackendNotFoundException;
 import com.tekken.site.Response;
 import com.tekken.site.Website;
 import com.tekken.support.Logs;
@@ -17,7 +18,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class TemplateFile implements FileUtils {
+import static com.tekken.Option.TEKKEN_FOLDER;
+
+public class TemplateFile extends FileUtils {
 
     private final String name;
     private final ClassLoaderExternal classLoaderExternal = new ClassLoaderExternal();
@@ -30,7 +33,7 @@ public class TemplateFile implements FileUtils {
 
     public TemplateFile(File file, String name, String htmlCode) {
         try {
-            this.urlClassLoader = classLoaderExternal.fileArrayToUrlClassLoader(new File("backends/").listFiles());
+            this.urlClassLoader = classLoaderExternal.fileArrayToUrlClassLoader(new File(TEKKEN_FOLDER+"backends/").listFiles());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -56,12 +59,18 @@ public class TemplateFile implements FileUtils {
                 document = Jsoup.parse(html);
 
                 try {
-                    Website website = (Website) classLoaderExternal.loadClass(backend, urlClassLoader).newInstance();
-                    backends.add(website);
+                    Class clazz = classLoaderExternal.loadClass(backend, urlClassLoader);
+                    if(clazz != null){
+                        Website website = (Website) clazz.newInstance();
+                        backends.add(website);
+                    }else
+                        throw new BackendNotFoundException(backend);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
+                } catch (BackendNotFoundException e) {
+                    Logs.error("Backend not found", e);
                 }
 
                 continue;
@@ -84,15 +93,26 @@ public class TemplateFile implements FileUtils {
 
                         break;
                     case "backend":
-
+                        Class clazz;
                         try {
-                            Class clazz = classLoaderExternal.loadClass(e.text(), urlClassLoader);
-                            Website website = (Website) clazz.newInstance();
-                            backends.add(website);
+                             clazz = classLoaderExternal.loadClass(e.text(), urlClassLoader);
+                            if(clazz != null){
+                                Website website = (Website) clazz.newInstance();
+                                backends.add(website);
+                            }else{
+                                 clazz = classLoaderExternal.loadClass(e.text(), urlClassLoader);
+                                if(clazz != null) {
+                                    Website website = (Website) clazz.newInstance();
+                                    backends.add(website);
+                                }
+                            }
+                                throw new BackendNotFoundException(e.text());
                         } catch (InstantiationException e1) {
                             e1.printStackTrace();
                         } catch (IllegalAccessException e1) {
                             e1.printStackTrace();
+                        } catch (BackendNotFoundException e1) {
+                            Logs.error("Backend not found", e1);
                         }
 
                         break;

@@ -15,12 +15,15 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
+import static com.tekken.Option.TEKKEN_FOLDER;
+import static com.tekken.Option.TEKKEN_MODULE;
+
 public class ModuleScanner {
 
     private URLClassLoader urlClassLoader;
     private List<String> clazzs = new ArrayList<>();
     private List<URL> urls = new ArrayList<>();
-    private File moduleDirectory = new File(Option.TEKKEN_MODULE);
+    private File moduleDirectory = new File(TEKKEN_FOLDER+TEKKEN_MODULE);
     private Map<String, URL> maps = new HashMap<>();
 
     public void moduleScannerDir(){
@@ -51,5 +54,9 @@ public class ModuleScanner {
 
     public List<String> getClazzs() {
         return clazzs;
+    }
+
+    public URLClassLoader getUrlClassLoader() {
+        return urlClassLoader;
     }
 }

@@ -7,6 +7,7 @@ import com.tekken.support.Benchmark;
 import com.tekken.support.Logs;
 import com.tekken.template.TemplateEngine;
 import com.tekken.template.TemplateFile;
+import com.tekken.template.TemplatePage;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
@@ -29,7 +30,7 @@ public class handleWebsite implements Handler<RoutingContext> {
         String pagename;
         if((pagename = templateEngine.getTemplateRouter().getPage(routingContext.request().path())) != null) {
 
-            TemplateFile templateFile = templateEngine.getTemplateCache().getTemplateFilesCache().get(pagename);
+            TemplatePage templatePage = templateEngine.getTemplateCache().getCache().get(pagename);
 
             Request request = new Request();
 
@@ -38,7 +39,7 @@ public class handleWebsite implements Handler<RoutingContext> {
             request.setParams(routingContext.request().method());
 
             try {
-                Response response = templateEngine.classLoader(templateFile, request);
+                Response response = templateEngine.classLoader(templatePage, request);
                 routingContext.response().setStatusCode(200);
                 routingContext.response().end(response.getHtmlCode());
 

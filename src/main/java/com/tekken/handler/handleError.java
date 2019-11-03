@@ -6,7 +6,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import java.io.File;
 
-public class handleError implements Handler<RoutingContext>, FileUtils {
+public class handleError extends FileUtils implements Handler<RoutingContext> {
 
 
 

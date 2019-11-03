@@ -60,6 +60,7 @@ public class ClassLoaderExternal extends ClassLoader {
     }
 
     public URLClassLoader fileArrayToUrlClassLoader(File[] listFiles) throws MalformedURLException {
+        if(listFiles == null) return new URLClassLoader(new URL[0]);
         List<URL> urlArrayList = new ArrayList<>();
         for (int i = 0; i < listFiles.length; i++) {
             if (FilenameUtils.getExtension(listFiles[i].getName()).equals("class"))

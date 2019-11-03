@@ -14,6 +14,8 @@ import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 
+import static com.tekken.Option.TEKKEN_FOLDER;
+
 public class TemplateEngine {
 
     private final TemplateUpdater templateUpdater;
@@ -28,10 +30,10 @@ public class TemplateEngine {
     }
 
 
-    public Response classLoader(TemplateFile templateFile, Request request) throws BackendInvalidException {
-        Response response = templateFile.getResponse();
+    public Response classLoader(TemplatePage templatePage, Request request) throws BackendInvalidException {
+        Response response = templatePage.getResponse();
 
-        for (Website back : templateFile.getBackends()) {
+        for (Website back : templatePage.getBackends()) {
             try {
                 response = back.handler(controller, request, response);
             } catch (Exception e) {
@@ -45,7 +47,7 @@ public class TemplateEngine {
 
     private void getBackend() {
         File dir;
-        if((dir = new File("backends/")) != null){
+        if((dir = new File(TEKKEN_FOLDER+"backends/")) != null){
             if(dir.isDirectory()){
                 for (File file : dir.listFiles()) {
                     if (FilenameUtils.getExtension(file.getName()).equals("java")){

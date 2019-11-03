@@ -11,6 +11,8 @@ public class Option {
     public static Integer VERTX_PORT = 80;
 
     public static boolean TEKKEN_DEBUG = true;
+
+    public static String TEKKEN_FOLDER = "tekken/";
     public static String TEKKEN_MODULE = "modules/";
     public static boolean MODE_DEVELOPPER = true;
 
@@ -23,7 +25,7 @@ public class Option {
 
     public static Integer MYSQL_POOL = 2;
 
-    private static File config = new File("config/config.xml");
+    private static File config = new File(TEKKEN_FOLDER+"config.xml");
 
     public static void loadConfig(){
         String line;
