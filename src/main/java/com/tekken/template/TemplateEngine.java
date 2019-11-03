@@ -12,7 +12,6 @@ import org.apache.commons.io.FilenameUtils;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 
 import static com.tekken.Option.TEKKEN_FOLDER;
 
@@ -23,7 +22,7 @@ public class TemplateEngine {
     private final TemplateCache templateCache = new TemplateCache(templateRouter);
     private final Controller controller;
 
-    public TemplateEngine(Controller controller) throws UnsupportedEncodingException {
+    public TemplateEngine(Controller controller) {
         this.controller = controller;
         getBackend();
         this.templateUpdater = new TemplateUpdater(Option.TEMPLATE_WEBROOT, this);
@@ -31,8 +30,8 @@ public class TemplateEngine {
 
 
     public Response classLoader(TemplatePage templatePage, Request request) throws BackendInvalidException {
-        Response response = templatePage.getResponse();
-
+        //Response response = templatePage.getResponse().;
+        Response response = new Response(templatePage.getHtmlCode());
         for (Website back : templatePage.getBackends()) {
             try {
                 response = back.handler(controller, request, response);

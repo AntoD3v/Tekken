@@ -11,14 +11,18 @@ import java.net.URLDecoder;
 
 public class TemplateUpdater extends FileUtils implements Runnable {
 
-    private final String path;
+    private String path;
     private final TemplateEngine templateEngine;
 
     private final ClassLoader classLoader = getClass().getClassLoader();
 
-    public TemplateUpdater(String root, TemplateEngine templateEngine) throws UnsupportedEncodingException {
+    public TemplateUpdater(String root, TemplateEngine templateEngine) {
         this.templateEngine = templateEngine;
-        path = URLDecoder.decode(classLoader.getResource(root).getPath(), "UTF-8");
+        try {
+            path = URLDecoder.decode(classLoader.getResource(root).getPath(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         new Thread(this).start();
     }
 

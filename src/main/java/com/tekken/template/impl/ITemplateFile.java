@@ -2,10 +2,7 @@ package com.tekken.template.impl;
 
 import com.tekken.site.Response;
 import com.tekken.site.Website;
-import com.tekken.template.build.ClassLoaderExternal;
 
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
 
 public interface ITemplateFile {

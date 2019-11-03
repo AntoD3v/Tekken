@@ -11,8 +11,6 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
-import java.io.UnsupportedEncodingException;
-
 public class Start extends AbstractVerticle {
 
     private final ModuleManager moduleManager;
@@ -23,12 +21,7 @@ public class Start extends AbstractVerticle {
     public Start() {
         moduleManager = new ModuleManager(this);
         controller = new Controller(moduleManager);
-        try {
-            templateEngine = new TemplateEngine(controller);
-        } catch (UnsupportedEncodingException e) {
-            Logs.error("Cannot found the template directory", e);
-        }
-
+        templateEngine = new TemplateEngine(controller);
     }
 
     public void start() {

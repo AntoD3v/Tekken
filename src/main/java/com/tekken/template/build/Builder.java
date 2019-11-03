@@ -8,7 +8,6 @@ import com.tekken.support.Logs;
 import com.tekken.template.TemplatePage;
 import com.tekken.template.impl.FileUtils;
 import com.tekken.template.impl.TemplateBuilder;
-import org.apache.commons.io.FilenameUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 

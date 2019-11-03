@@ -6,7 +6,6 @@ import com.tekken.site.Response;
 import com.tekken.support.Benchmark;
 import com.tekken.support.Logs;
 import com.tekken.template.TemplateEngine;
-import com.tekken.template.TemplateFile;
 import com.tekken.template.TemplatePage;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;

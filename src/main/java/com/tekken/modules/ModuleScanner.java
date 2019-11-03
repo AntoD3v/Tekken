@@ -1,6 +1,5 @@
 package com.tekken.modules;
 
-import com.tekken.Option;
 import com.tekken.support.Logs;
 import org.apache.commons.io.FilenameUtils;
 

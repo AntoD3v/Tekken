@@ -49,7 +49,7 @@ public class TemplatePage implements ITemplateFile {
 
     @Override
     public Response getResponse() {
-        return null;
+        return response;
     }
 
     @Override
