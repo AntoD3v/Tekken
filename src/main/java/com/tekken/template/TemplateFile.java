@@ -50,27 +50,28 @@ public class TemplateFile extends FileUtils {
         Element imp; String template, backend, html; File file;
         while(it.hasNext()){
             imp = it.next();
-            if((template = imp.attr("template")) != null && (backend = imp.attr("backend")) != null){
+            if((template = imp.attr("template")) != null){
                 if(!(file = new File(getPathRessource(Option.TEMPLATE_WEBROOT)+"/"+template)).exists()){
                     Logs.warn("Cannot import template in "+getName());
                     continue;
                 }
                 html = document.toString().replace(imp.toString(), readToString(file));
                 document = Jsoup.parse(html);
-
-                try {
-                    Class clazz = classLoaderExternal.loadClass(backend, urlClassLoader);
-                    if(clazz != null){
-                        Website website = (Website) clazz.newInstance();
-                        backends.add(website);
-                    }else
-                        throw new BackendNotFoundException(backend);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (BackendNotFoundException e) {
-                    Logs.error("Backend not found", e);
+                if((backend = imp.attr("backend")) != null) {
+                    try {
+                        Class clazz = classLoaderExternal.loadClass(backend, urlClassLoader);
+                        if (clazz != null) {
+                            Website website = (Website) clazz.newInstance();
+                            backends.add(website);
+                        } else
+                            throw new BackendNotFoundException(backend);
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (BackendNotFoundException e) {
+                        Logs.error("Backend not found (" + backend + ") in " + file.getName(), e);
+                    }
                 }
 
                 continue;
@@ -92,7 +93,7 @@ public class TemplateFile extends FileUtils {
                     case "compile":
 
                         break;
-                    case "backend":
+                    case "backends":
                         Class clazz;
                         try {
                              clazz = classLoaderExternal.loadClass(e.text(), urlClassLoader);
@@ -112,7 +113,7 @@ public class TemplateFile extends FileUtils {
                         } catch (IllegalAccessException e1) {
                             e1.printStackTrace();
                         } catch (BackendNotFoundException e1) {
-                            Logs.error("Backend not found", e1);
+                            Logs.error("Backend not found ("+e.text()+") in "+getName(), e1);
                         }
 
                         break;

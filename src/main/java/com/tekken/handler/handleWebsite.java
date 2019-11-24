@@ -36,6 +36,8 @@ public class handleWebsite implements Handler<RoutingContext> {
             request.setPath(routingContext.request().path());
             request.setMethod(routingContext.request().method());
             request.setParams(routingContext.request().method());
+            request.setCookies(routingContext.cookies());
+            request.setRoutingContext(routingContext);
 
             try {
                 Response response = templateEngine.classLoader(templatePage, request);

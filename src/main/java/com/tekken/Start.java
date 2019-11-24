@@ -9,6 +9,7 @@ import com.tekken.template.TemplateEngine;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
 public class Start extends AbstractVerticle {
@@ -31,6 +32,7 @@ public class Start extends AbstractVerticle {
         moduleManager.executeReady();
 
         routers.route().handler(BodyHandler.create());
+        routers.route().handler(CookieHandler.create());
 
         routers.route("/assets/*").handler(StaticHandler.create().setCachingEnabled(true).setWebRoot("assets"));
         routers.get().handler(new handleWebsite(templateEngine));
@@ -43,5 +45,13 @@ public class Start extends AbstractVerticle {
 
     public Router getRouters() {
         return routers;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public ModuleManager getModuleManager() {
+        return moduleManager;
     }
 }

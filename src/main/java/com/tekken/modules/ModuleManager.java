@@ -111,5 +111,13 @@ public class ModuleManager extends FileUtils {
         });
     }
 
+    public Map<String, JavaModule> getModules() {
+        return modules;
+    }
 
+    public JavaModule getModule(String name){
+        if(modules.containsKey(name))
+            return modules.get(name);
+        return null;
+    }
 }

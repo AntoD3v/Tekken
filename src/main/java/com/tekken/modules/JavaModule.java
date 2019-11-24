@@ -40,6 +40,10 @@ public abstract class JavaModule {
         this.main = main;
     }
 
+    public Start getTekken() {
+        return main;
+    }
+
     public Router getRouters(){
         return main.getRouters();
     }

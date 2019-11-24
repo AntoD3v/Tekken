@@ -1,8 +1,7 @@
 <html>
 <tekken>
-    <backend>com.pouletnetwork.backends.Home</backend>
-    <getter>/home</getter>
-    <getter>/</getter>
+    <backend>com.pouletnetwork.backends.Shop</backend>
+    <getter>/shop/rank</getter>
 </tekken>
 <head>
     <title>Accueil - PouletNetwork</title>
@@ -15,33 +14,13 @@
     <link href="/assets/style/style.css" rel="stylesheet">
 </head>
 <body>
-<div id="particles-js"></div>
 <tekken-import template="include/header.html" backend="com.pouletnetwork.backends.Header"/>
-<div class="widget center">
-    <div class="blur"></div>
 
-    <div class="text center"><br><br>
-        <h1 class="title_gros">PLAY.POULETNETWORK.FR</h1>
-        <br><br>
-        <div class="play_left">
-            <p class="play_stats_name">Joueurs en ligne</p>
-            <p><?= $server->count_online() ?></p>
-        </div>
-        <div class="play_right">
-            <p class="play_stats_name">Joueurs enregistrés</p>
-            <p>{account_register}</p>
-        </div>
-    </div>
-</div>
-<div class="structure_white">
-    <h1 class="structure_white_title">Présentation</h1>
-    <div class="structure_white_separation"></div>
-    <p class="structure_white_text">Bienvenue sur <b>Poulet Network</b>. Ce serveur Minecraft a été crée dans le but de réunir du monde peuvent jouer tranquillement sur un <b>serveur libre</b>, ou les <b>grades ne sont pas cher</b> et ou il y a système de <b>Host</b> que l'ont peut obtenir très facilement. Nous voulons faire profiter tout le monde a moindre frais : <b>Serveur en crack</b>. Merci beaucoup de nous soutenir dans cette quête :D</p>
-    <br><img src="assets/images/poulet.png">
-</div>
+<div style="height: 100px;display: block;width: 100%"></div>
 <div class="structure_black">
     <h1 class="structure_black_title">BOUTIQUE</h1>
     <div class="structure_black_separation"></div>
+
     <div class="pricing-table group">
         <div class="block personal fl">
             <h2 class="title">Chicks</h2>
@@ -60,7 +39,7 @@
                 <li><span class="fontawesome-cloud"></span>Grade a vie</li>
             </ul>
 
-            <a href="https://pouletnetwork.tk/shop/boutique_pseudo.php?offre=1" style="text-decoration: none;">
+            <a href="https://pouletnetwork.tk/shop/boutique_pseudo.php?offre=Chicks&type=RANK" style="text-decoration: none;">
                 <div class="pt-footer">
                     Acheter <b>Chicks</b>
                 </div>
@@ -83,7 +62,7 @@
                 <li><span class="fontawesome-dashboard"></span>Booster x2</li>
                 <li><span class="fontawesome-cloud"></span>Grade a vie</li>
             </ul>
-            <a href="https://pouletnetwork.tk/shop/boutique_pseudo.php?offre=2" style="text-decoration: none;">
+            <a href="https://pouletnetwork.tk/shop/boutique_pseudo.php?offre=Chickens&type=RANK" style="text-decoration: none;">
                 <div class="pt-footer">
                     Acheter <b>Chikens</b>
                 </div>
@@ -106,7 +85,7 @@
                 <li><span class="fontawesome-dashboard"></span>Booster x3</li>
                 <li><span class="fontawesome-cloud"></span>Grade a vie</li>
             </ul>
-            <a href="./shop/boutique_pseudo.php?offre=3" style="text-decoration: none;">
+            <a href="https://pouletnetwork.tk/shop/boutique_pseudo.php?offre=SuperChikens&type=RANK" style="text-decoration: none;">
                 <div class="pt-footer">
                     Acheter <b>SuperChikens</b>
                 </div>
@@ -114,26 +93,8 @@
         </div>
     </div>
 </div>
-<div class="structure_white">
-    <h1 class="structure_white_title">Staff</h1>
-    <div class="structure_white_separation"></div>
-    <div class="about_struc">
-        <div class="about_box">
-            <img src="assets/images/antozzz.png" class="about_sphere"><p class="about_grade"><p class="about_rouge">Syst.Admin</p> & <p class="about_vert">Développeur</p></p><p class="about_text">AntoZzz</p>
-        </div>
-        <div class="about_box">
-            <img src="assets/images/padawan.jpg" class="about_sphere"><p class="about_grade"><p class="about_rouge">Syst.Admin</p> & <p class="about_vert">Développeur</p><p class="about_text">Acterax</p>
-        </div>
-    </div>
-    <br>
+<div class="footer">
+    <h1 class="footer_text">COPYRIGHT © 2017 PouletNetwork - Designed by <a href="http://antozzz.esy.es">AntoZzz</a></h1>
 </div>
-<tekken-import template="include/footer.html"/>
-<img src="assets/images/scroll-down.png" class="scrolldonw">
-<script src="assets/js/particles.js"></script>
-<script>
-    particlesJS.load('particles-js', 'assets/js/particles.json', function(){
-        console.log('particles.json loaded...');
-    });
-</script>
 </body>
 </html>

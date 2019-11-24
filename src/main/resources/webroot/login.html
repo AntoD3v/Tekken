@@ -1,19 +1,42 @@
-<html lang="fr">
+<html>
 <tekken>
-    <backend>com.tekken.auth.back.Login</backend>
+    <backend>com.tekken.auth.backend.Login</backend>
     <getter>/login</getter>
 </tekken>
 <head>
+    <title>Connexion - PouletNetwork</title>
+    <link rel="icon" type="image/png" href="/assets/images/poulet.png" />
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="description" content="Dans ce site, vous trouverez tous les projets de AntoZzz">
+    <meta name="keywords" content="poulet network, chicken network, minecraft, AntoZzz, SorryNoName3">
+    <meta name="author" content="AntoZzz">
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans" rel="stylesheet">
+    <link href="/assets/style/style.css" rel="stylesheet">
 </head>
 <body>
-
-    <form action="/auth/login">
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" name="submit" value="Connexion">
-    </form>
-
+<tekken-import template="include/header.html" backend="com.pouletnetwork.backends.Header"/>
+<div style="height: 100px;display: block;width: 100%"></div>
+<div class="structure_black">
+    <h1 class="structure_black_title">CONNEXION</h1>
+    <div class="structure_black_separation"></div>
+    <div class="login_form">
+        <img class="login_title" src="images/neko/neko.png">
+        <form method="POST" action="./AuthSecu/api.php">
+            <div class="login_form">
+                <input class="login_input" style="width: 25%" id="pseudo" type="text" placeholder="Pseudo ..." name="pseudonyme"> <br>
+                <input class="login_input" style="width: 25%" id="password" autocomplete="off" type="password" placeholder="Mots de passe ..." name="password"> <br><br>
+                <input class="login_saveme" type="checkbox" name="saveme" id="saveme">
+                <label class="login_saveme_label" style="color:white" for="saveme">Se souvenir de moi </label><br><br>
+                <!-- <a class="login_url" href="register.php">Pas de compte ? Inscrirez-vous </a> -->
+            </div>
+            <div class="bouton_accueil" style="height: 100px!important;">
+                <button name="connexion" class="bouton btn-extralarge btn-vert">CONNEXION</button>
+                <a href="index.php" class="bouton btn-extralarge btn-bleu">RETOUR VERS NEKO</a>
+            </div>
+        </form>
+    </div>
+</div>
+<tekken-import template="include/footer.html"/>
 </body>
 </html>
+

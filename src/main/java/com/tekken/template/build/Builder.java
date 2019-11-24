@@ -34,7 +34,6 @@ public class Builder extends FileUtils implements TemplateBuilder {
         Document document = Jsoup.parse(templatePage.getHtmlCode());
         if(document.select("tekken").size() == 0) return;
         document.select("tekken").get(0).children().forEach(element -> {
-
             switch (element.tagName()){
                 case "getter":
                     templatePage.addRouters(element.text());
@@ -44,7 +43,7 @@ public class Builder extends FileUtils implements TemplateBuilder {
                     break;
 
                 default:
-                    Logs.warn("Configuration parameters <"+element.tagName()+"> is useless");
+                    Logs.warn("Configuration parameters <"+element.tagName()+"> is useless in "+templatePage.getName());
                     break;
             }
 
@@ -54,17 +53,20 @@ public class Builder extends FileUtils implements TemplateBuilder {
     @Override
     public void importationBuilder() {
         String htmlCode = templatePage.getHtmlCode();
-        Jsoup.parse(htmlCode).select("tekken-import").forEach(element -> {
+        Document parser = Jsoup.parse(htmlCode);
+        parser.select("tekken-import").forEach(element -> {
             String template, backend; File file;
-            if((template = element.attr("template")) != null && (backend = element.attr("backend")) != null){
+            if((template = element.attr("template")) != null){
                 if((file = new File(getPathRessource(Option.TEMPLATE_WEBROOT)+"/"+template)).exists()){
-                    templatePage.updateHtmlCode(htmlCode.replaceAll("(?s)<tekken-import .*?>", readToString(file)));
-                    templatePage.addBackend(loadClass(backend));
+                    if((backend = element.attr("backend")) != null && !backend.equals(""))
+                        templatePage.addBackend(loadClass(backend));
+                    element.html(readToString(file));
                 }else
                     Logs.warn("Cannot import the template for "+templatePage.getName());
 
             }
         });
+        templatePage.updateHtmlCode(parser.toString());
     }
 
     @Override
@@ -109,7 +111,7 @@ public class Builder extends FileUtils implements TemplateBuilder {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (BackendNotFoundException e) {
-            Logs.error("Backend not found "+backend);
+            Logs.error("Backend not found "+backend+" in "+templatePage.getName());
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (IOException e) {

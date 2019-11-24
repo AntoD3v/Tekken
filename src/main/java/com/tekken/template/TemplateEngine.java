@@ -8,6 +8,7 @@ import com.tekken.site.Response;
 import com.tekken.site.Website;
 import com.tekken.support.Logs;
 import org.apache.commons.io.FilenameUtils;
+import sun.rmi.runtime.Log;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -30,7 +31,6 @@ public class TemplateEngine {
 
 
     public Response classLoader(TemplatePage templatePage, Request request) throws BackendInvalidException {
-        //Response response = templatePage.getResponse().;
         Response response = new Response(templatePage.getHtmlCode());
         for (Website back : templatePage.getBackends()) {
             try {

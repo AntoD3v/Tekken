@@ -33,7 +33,7 @@ public class ModuleTester extends FileUtils {
 
         }
 
-        System.out.println(Class.forName("com.tekken.auth.back.Login").newInstance().toString());
+        System.out.println(Class.forName("com.tekken.auth.backends.Login").newInstance().toString());
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {

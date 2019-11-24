@@ -10,7 +10,7 @@ public class BuilderTester {
         Builder builder = new Builder("sql","<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<tekken>\n" +
-                "    <backend>com.tekken.example.PageSQL</backend>\n" +
+                "    <backends>com.tekken.example.PageSQL</backends>\n" +
                 "    <getter>/mysql</getter>\n" +
                 "</tekken>\n" +
                 "<head>\n" +
@@ -24,7 +24,7 @@ public class BuilderTester {
         TemplatePage templatePage = builder.build();
 
         templatePage.getBackends().forEach(backend -> {
-            System.out.println("back -> "+backend.toString());
+            System.out.println("backends -> "+backend.toString());
         });
         //System.out.println(builder.build().getHtmlCode());
     }

@@ -1,5 +1,6 @@
 package com.tekken;
 
+import com.tekken.data.WebSocketServlet;
 import com.tekken.support.Updater;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;

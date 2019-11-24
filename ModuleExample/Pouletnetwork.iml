@@ -10,5 +10,7 @@
     <orderEntry type="module" module-name="tekken" />
     <orderEntry type="library" name="Maven: io.vertx:vertx-web:3.7.1" level="project" />
     <orderEntry type="library" name="Maven: io.vertx:vertx-core:3.7.1" level="project" />
+    <orderEntry type="module" module-name="AuthTekken" />
+    <orderEntry type="module" module-name="Shopper" />
   </component>
 </module>
