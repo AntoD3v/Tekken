@@ -5,11 +5,13 @@ import com.tekken.auth.AuthTekken;
 
 import com.tekken.auth.crypt.Crypt;
 import com.tekken.auth.crypt.Sha256;
+import com.tekken.auth.session.Userdata;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.RoutingContext;
 import javax.xml.ws.handler.MessageContext;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.UUID;
 
 public class handlePostLogin implements Handler<RoutingContext> {
@@ -25,18 +27,22 @@ public class handlePostLogin implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext routingContext) {
         String user, pass;
+
+        System.out.println("user: "+routingContext.request().getParam("user") );
+        System.out.println("pass: "+routingContext.request().getParam("pass") );
         if((user = routingContext.request().getParam("user")) != null && (pass = routingContext.request().getParam("pass")) != null){
             String passCrypted = crypt.crypt(pass);
             try {
                 if(authTekken.getDatabase().login(user, passCrypted)){
 
                     String cookie = "tekken_" + UUID.randomUUID().toString();
-                    authTekken.getSessionManager().add(cookie);
+                    authTekken.getSessionManager().add(new Userdata(new Random().nextInt(1000), user), cookie);
 
                     Cookie cookieWeb = Cookie.cookie("tekken_auth",cookie);
                     cookieWeb.setPath("/");
                     cookieWeb.setMaxAge(158132000l);
                     routingContext.addCookie(cookieWeb);
+                    routingContext.reroute("/");
                     routingContext.response().end(AuthCode.failed(AuthCode.Code.CONNEXION_SUCCES, "Success connection"));
                 }else
                     routingContext.response().end(AuthCode.failed(AuthCode.Code.BAD_PASS_OR_USER, "Mots de passe incorrect"));
