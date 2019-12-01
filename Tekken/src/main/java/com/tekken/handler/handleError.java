@@ -15,7 +15,7 @@ public class handleError extends FileUtils implements Handler<RoutingContext> {
 
             String path = getPathRessource("tekken_default");
             File file = new File(path+"/"+routingContext.statusCode()+".html");
-            routingContext.response().end(file.exists() ? readToString(file) : "Error tekken");
+            routingContext.response().end(file.exists() ? readToString(file) : "Error "+routingContext.statusCode());
 
     }
 

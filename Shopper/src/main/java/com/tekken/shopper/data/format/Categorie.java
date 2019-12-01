@@ -1,4 +1,4 @@
-package com.tekken.shopper.data;
+package com.tekken.shopper.data.format;
 
 public class Categorie {
 

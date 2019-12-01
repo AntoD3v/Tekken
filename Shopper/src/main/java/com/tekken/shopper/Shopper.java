@@ -1,10 +1,8 @@
 package com.tekken.shopper;
 
-import com.tekken.data.ArrayFixe;
 import com.tekken.modules.JavaModule;
 import com.tekken.data.MapFixe;
-import com.tekken.shopper.data.Item;
-import com.tekken.shopper.network.handlers.handlerPaypal;
+import com.tekken.shopper.data.format.Item;
 
 public class Shopper extends JavaModule {
 

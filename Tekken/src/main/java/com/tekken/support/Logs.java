@@ -44,7 +44,14 @@ public class Logs implements Runnable {
         t.printStackTrace();
     }
 
-    private static void print(String msg) {
+    private static void print(String message) {
+        if(isLinux())
+            printUnix(message);
+        else
+            printWin(message);
+    }
+
+    private static void printWin(String msg) {
         if (Option.TEKKEN_DEBUG) {
             LocalTime currentTime = LocalTime.now();
             String timestamp = currentTime.format(timeFormatter);
@@ -61,8 +68,28 @@ public class Logs implements Runnable {
             }
             AnsiConsole.systemInstall();
 
-        } else {
-            System.out.println(msg);
         }
+    }
+
+    private static void printUnix(String msg) {
+        if (Option.TEKKEN_DEBUG) {
+            LocalTime currentTime = LocalTime.now();
+            String timestamp = currentTime.format(timeFormatter);
+
+            if(msg.startsWith("ERROR")) {
+                System.out.println("\u001B[31m"+timestamp + " " + msg);
+            } else if(msg.startsWith("WARN")) {
+                System.out.println("\u001B[36m"+timestamp + " " + msg);
+            }else {
+                System.out.println(timestamp + " " + msg);
+            }
+        }
+    }
+
+    private static boolean isLinux() {
+        if(System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)
+            return false;
+        else
+            return true;
     }
 }

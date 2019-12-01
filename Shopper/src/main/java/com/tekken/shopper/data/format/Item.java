@@ -1,4 +1,6 @@
-package com.tekken.shopper.data;
+package com.tekken.shopper.data.format;
+
+import com.tekken.shopper.data.format.Categorie;
 
 public class Item {
 
