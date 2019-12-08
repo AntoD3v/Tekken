@@ -2,18 +2,13 @@ package com.tekken.auth.api;
 
 import com.tekken.auth.AuthCode;
 import com.tekken.auth.AuthTekken;
-
 import com.tekken.auth.crypt.Crypt;
 import com.tekken.auth.crypt.Sha256;
 import com.tekken.auth.session.Userdata;
-import io.netty.handler.codec.http.QueryStringDecoder;
 import io.vertx.core.Handler;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.RoutingContext;
-import javax.xml.ws.handler.MessageContext;
+
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
